@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#facoring challenge
+import sys
+
+def factorize(n):
+    for i in range(2, n // 2 + 1):
+        if n % i == 0:
+            return f"{n}={i}*{n // i}"
+    return f"{n}=1*{n}"
+
+def main(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            numbers = file.readlines()
+            for line in numbers:
+                number = int(line.strip())
+                print(factorize(number))
+    except FileNotFoundError:
+        print("File not found!")
+    except ValueError:
+        print("Invalid data in the file!")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <file>")
+    else:
+        main(sys.argv[1])
+
