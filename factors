@@ -1,25 +1,17 @@
 #!/usr/bin/env bash
-# is a factors challenge
 
-from Crypto.PublicKey import RSA
-from Crypto.Util.number import bytes_to_long, long_to_bytes
+factorize_number() {
+    num=$1
+    factors=$(python3 -c "from sympy import factorint; print(factorint($num))")
+    echo "$num=$factors"
+}
 
-def factorize_with_rsa(n):
-  
-    key = RSA.generate(512)
-
-    # Convert the number 'n' into bytes for RSA encryption
-    num_bytes = long_to_bytes(n)
-
-    # Encrypt the number 'n' using RSA public key
-    cipher = key.encrypt(num_bytes, 0)[0]
-
-    # Decrypt the encrypted number using RSA private key
-    decrypted = key.decrypt((cipher,))
-
-    # Convert the decrypted bytes back to an integer to represent factors
-    factor_1 = bytes_to_long(decrypted)
-    factor_2 = n // factor_1
-
-    return factor_1, factor_2
+if [ $# -ne 1 ]; then
+    echo 'Usage: factors <file>'
+    exit 1
+else
+    while read i; do
+        factorize_number "$i"
+    done < "$1"
+fi
 
