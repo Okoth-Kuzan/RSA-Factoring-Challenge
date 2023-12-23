@@ -1,40 +1,42 @@
 #!/usr/bin/env bash
 
 # Pollard's Rho algorithm for factorization
-pollard_rho_factorization() {
-    N=$1
-    if [ $N -eq 1 ]; then
-        echo "1=1*1"
-        return
-    fi
 
-    g() {
-        local x=$((RANDOM%N))
-        local y=$x
-        local c=$((RANDOM%N))
-        local d=1
+pollard_rho_factorization()
+{
+	N=$1
+	if [ $N -eq 1 ]; then
+		echo "1=1*1"
+		return
+	fi
+	g()
+	{
+		local x=$((RANDOM%N))
+		local y=$x
+		local c=$((RANDOM%N))
+		local d=1
 
-        while [ $d -eq 1 ]; do
-            x=$(( (x*x + c) % N ))
-            y=$(( (y*y + c) % N ))
-            y=$(( (y*y + c) % N ))
-            d=$(( (x - y + N) % N ))
-            d=$(factor $d | sed 's/.*: //')
-        done
-        echo "$d"
-    }
+		while [ $d -eq 1 ]; do
+			x=$(( (x*x + c) % N ))
+			y=$(( (y*y + c) % N ))
+			y=$(( (y*y + c) % N ))
+			d=$(( (x - y + N) % N ))
+			d=$(factor $d | sed 's/.*: //')
+		done
+		echo "$d"
+	}
 
-    factor1=$(g $N)
-    factor2=$((N / factor1))
-    echo "$N=$factor1*$factor2"
+factor1=$(g $N)
+factor2=$((N / factor1))
+echo "$N=$factor1*$factor2"
 }
 
 if [ $# -ne 1 ]; then
-    echo 'Usage: factors <file>'
-    exit 1
+	echo 'Usage: factors <file>'
+	exit 1
 fi
 
 while read num; do
-    pollard_rho_factorization "$num"
+	pollard_rho_factorization "$num"
 done < "$1"
 
