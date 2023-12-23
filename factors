@@ -2,8 +2,32 @@
 
 factorize_number() {
     num=$1
-    factors=$(python3 -c "from sympy import factorint; print(factorint($num))")
-    echo "$num=$factors"
+    factors=$(python3 - <<END
+from sympy import randprime
+from sympy.ntheory import factorint
+
+def pollard_rho(n):
+    if n == 1:
+        return [1]
+
+    def rho(x, c):
+        return (x**2 + c) % n
+
+    x = 2
+    y = 2
+    d = 1
+    while d == 1:
+        x = rho(x, 1)
+        y = rho(rho(y, 1), 1)
+        d = factorint(abs(x - y), visual=False)
+
+    return [d, n // d]
+
+result = pollard_rho($num)
+print(f"{num}={result[0]}*{result[1]}")
+END
+)
+    echo "$factors"
 }
 
 if [ $# -ne 1 ]; then
